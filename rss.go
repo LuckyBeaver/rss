@@ -56,10 +56,12 @@ func FetchByClient(url string, client *http.Client) (*Feed, error) {
 
 func FetchByFunc(fetchFunc FetchFunc, url string) (*Feed, error) {
 	resp, err := fetchFunc()
+	if resp != nil {
+		defer resp.Body.Close()
+	}
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
